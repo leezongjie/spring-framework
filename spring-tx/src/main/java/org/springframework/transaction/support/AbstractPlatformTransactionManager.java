@@ -971,7 +971,11 @@ public abstract class AbstractPlatformTransactionManager
 			this.transactionExecutionListeners.forEach(listener -> listener.afterRollback(status, rbex));
 			throw rbex;
 		}
-		triggerAfterCompletion(status, TransactionSynchronization.STATUS_ROLLED_BACK);
+		if (ex instanceof TransactionException) {
+			triggerAfterCompletion(status, TransactionSynchronization.STATUS_ROLLED_BACK);
+		} else {
+			triggerAfterCompletion(status, TransactionSynchronization.STATUS_UNKNOWN);
+		}
 		this.transactionExecutionListeners.forEach(listener -> listener.afterRollback(status, null));
 	}
 
